@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import fr.massen.sokoban.level.LevelData;
-import fr.massen.sokoban.level.Tiles;
+import fr.massen.sokoban.level.Level;
 import fr.massen.sokoban.level.tiles.Tile;
+import fr.massen.sokoban.load.Tiles;
 
 public class SokReader implements ILevelReader {
 
@@ -21,11 +21,11 @@ public class SokReader implements ILevelReader {
 	}
 
 	@Override
-	public List<LevelData> readLevelData(File file) throws ReadLevelException {
-		List<LevelData> levels = new ArrayList<LevelData>();
+	public List<Level> readLevels(File file) throws ReadLevelException {
+		List<Level> levels = new ArrayList<Level>();
 		try {
 			Scanner scanner = new Scanner(file);
-			LevelData level;
+			Level level;
 			while ((level = readNextLevel(scanner)) != null) {
 				levels.add(level);
 			}
@@ -37,9 +37,9 @@ public class SokReader implements ILevelReader {
 	}
 
 	// I have to use scanner directly to avoid input stream closing or resource leak issues
-	private LevelData readNextLevel(Scanner scanner) throws ReadLevelException {
-		LevelData levelData;
-		List<List<Tile>> redTiles = new ArrayList<List<Tile>>();
+	private Level readNextLevel(Scanner scanner) throws ReadLevelException {
+		Level levelData;
+		List<List<Tile>> readTiles = new ArrayList<List<Tile>>();
 		int width = 0;
 		int height = 0;
 		String line;		
@@ -56,19 +56,19 @@ public class SokReader implements ILevelReader {
 						lineTiles.add(redTile);
 					}
 				}
-				redTiles.add(lineTiles);
+				readTiles.add(lineTiles);
 			}
 		}
 		
-		height = redTiles.size();
+		height = readTiles.size();
 		if(width == 0 || height == 0) {
 			return null;
 		} else {
-			levelData = new LevelData(width, height);
+			levelData = new Level(width, height);
 			for(int y = 0; y < height; y++) {
 				for(int x = 0; x < width; x++) {
-					if(x < redTiles.get(y).size()) {
-						levelData.setTile(x, y, redTiles.get(y).get(x));
+					if(x < readTiles.get(y).size()) {
+						levelData.setTile(x, y, readTiles.get(y).get(x));
 					} else {
 						levelData.setTile(x, y, Tiles.VOID);
 					}

@@ -1,4 +1,4 @@
-package fr.massen.sokoban.level;
+package fr.massen.sokoban.load;
 
 import java.util.Map;
 

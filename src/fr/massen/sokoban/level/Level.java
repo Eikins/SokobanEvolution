@@ -5,13 +5,13 @@ import java.util.List;
 
 import fr.massen.sokoban.level.tiles.Tile;
 
-public class LevelData {
+public class Level {
 	
 	private final int width, height;
 	private final Tile[][] tiles;
 	private final List<Entity> entities;
 	
-	public LevelData(int width, int height) {
+	public Level(int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.tiles = new Tile[width][height];

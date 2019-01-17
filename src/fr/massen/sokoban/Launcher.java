@@ -6,8 +6,8 @@ import java.util.List;
 import fr.massen.sokoban.io.ILevelReader;
 import fr.massen.sokoban.io.ReadLevelException;
 import fr.massen.sokoban.io.SokReader;
-import fr.massen.sokoban.level.LevelData;
-import fr.massen.sokoban.level.Tiles;
+import fr.massen.sokoban.level.Level;
+import fr.massen.sokoban.load.Tiles;
 
 public class Launcher {
 	
@@ -25,7 +25,7 @@ public class Launcher {
 		File levelFile = new File("assets/levels/levels.sok");
 		ILevelReader levelReader = new SokReader();
 		try {
-			List<LevelData> levels = levelReader.readLevelData(levelFile);
+			List<Level> levels = levelReader.readLevels(levelFile);
 			System.out.println(levels.get(0).toString());
 		} catch (ReadLevelException e) {
 			e.printStackTrace();
