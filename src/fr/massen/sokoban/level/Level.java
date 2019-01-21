@@ -7,7 +7,7 @@ import fr.massen.sokoban.level.tiles.Tile;
 
 public class Level {
 	
-	private final int width, height;
+	public final int width, height;
 	private final Tile[][] tiles;
 	private final List<Entity> entities;
 	
@@ -30,8 +30,9 @@ public class Level {
 			return true;
 		}
 	}
-	
-	
-	
+
+	public Tile getTile(int x, int y) {
+		return tiles[x][y];
+	}
 	
 }

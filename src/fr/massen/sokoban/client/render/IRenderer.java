@@ -5,5 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 public interface IRenderer {
 	
 	void render(GraphicsContext gc, float deltaTime);
+	
+	int getRenderLayer();
 
 }
