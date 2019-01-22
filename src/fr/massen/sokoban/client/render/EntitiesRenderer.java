@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.massen.sokoban.client.render.entities.IEntityRenderer;
-import fr.massen.sokoban.client.render.entities.RenderEntityCrate;
+import fr.massen.sokoban.client.render.entities.RenderEntityBasic;
 import fr.massen.sokoban.client.render.entities.RenderEntityPlayer;
 import fr.massen.sokoban.entities.Entity;
 import fr.massen.sokoban.entities.EntityCrate;
@@ -17,18 +17,18 @@ public class EntitiesRenderer implements IRenderer {
 
 	public EntitiesRenderer() {
 		entitiesRenderers = new HashMap<Class<? extends Entity>, IEntityRenderer<? extends Entity>>();
-		registerEntityRenderer(EntityCrate.class, new RenderEntityCrate());
+		registerEntityRenderer(EntityCrate.class, new RenderEntityBasic("crate"));
 		registerEntityRenderer(EntityPlayer.class, new RenderEntityPlayer());
 	}
 
-	public <T extends Entity> void registerEntityRenderer(Class<T> entityClass, IEntityRenderer<T> renderer) {
+	public <T extends Entity> void registerEntityRenderer(Class<T> entityClass, IEntityRenderer<? super T> renderer) {
 		entitiesRenderers.put(entityClass, renderer);
 	}
 	
 	@SuppressWarnings("unchecked")
 	// We know it's safe
 	private <T extends Entity> void renderEntity(T entity, RenderContext ctx) {
-		IEntityRenderer<T> entityRenderer = (IEntityRenderer<T>) entitiesRenderers.get(entity.getClass());
+		IEntityRenderer<? super T> entityRenderer = (IEntityRenderer<? super T>) entitiesRenderers.get(entity.getClass());
 		if(entityRenderer != null) {
 			entityRenderer.render(entity, ctx);
 		}

@@ -7,11 +7,10 @@ import java.util.List;
 import fr.massen.sokoban.SokobanApplication;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 
 public class RenderManager extends AnimationTimer {
 
-	private SokobanApplication application;
+	private final SokobanApplication application;
 	
 	private RenderContext renderContext;
 	List<IRenderer> renderers;
@@ -20,6 +19,7 @@ public class RenderManager extends AnimationTimer {
 	public RenderManager(SokobanApplication application, Canvas canvas) {
 		this.renderers = new LinkedList<IRenderer>();
 		renderContext = new RenderContext(canvas.getGraphicsContext2D(), null);
+		this.application = application;
 	}
 	
 	public RenderContext getRenderContext() {
@@ -47,6 +47,7 @@ public class RenderManager extends AnimationTimer {
 	@Override
 	public void handle(long currentNanoTime) {
 		renderContext.updateDeltaTime(currentNanoTime);
+		renderContext.updatePartialTime(currentNanoTime, application.getPhysicsManager().getLastUpdateNanoTime());
 		// Do Renders
 		for(IRenderer renderer : renderers) {
 			renderer.render(renderContext);

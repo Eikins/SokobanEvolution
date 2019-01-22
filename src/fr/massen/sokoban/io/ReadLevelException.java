@@ -23,6 +23,7 @@ public class ReadLevelException extends Exception {
 	
 	public enum Type {
 		IO,
-		UNKNOWN_TILE;
+		UNKNOWN_TILE,
+		UNKNOWN_ENTITY;
 	}
 }

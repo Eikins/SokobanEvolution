@@ -2,22 +2,29 @@ package fr.massen.sokoban;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import fr.massen.sokoban.client.render.EntitiesRenderer;
 import fr.massen.sokoban.client.render.IRenderer;
 import fr.massen.sokoban.client.render.RenderContext;
 import fr.massen.sokoban.client.render.RenderManager;
 import fr.massen.sokoban.client.render.TilesRenderer;
-import fr.massen.sokoban.entities.EntityCrate;
+import fr.massen.sokoban.controller.Controller;
+import fr.massen.sokoban.controller.PlayerController;
 import fr.massen.sokoban.io.ILevelReader;
 import fr.massen.sokoban.io.ReadLevelException;
 import fr.massen.sokoban.io.SokReader;
 import fr.massen.sokoban.level.Level;
 import fr.massen.sokoban.physics.PhysicsManager;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -38,10 +45,60 @@ public class SokobanApplication extends Application {
 		Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 
-		Canvas renderCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
-		renderManager = new RenderManager(this, renderCanvas);
-		root.getChildren().add(renderCanvas);
+		startPhysicsThread();
+		startRenderThread(root);
+		
 
+
+
+	
+		// BEGIN TEST
+		File levelFile = new File("assets/levels/levels.sok");
+		ILevelReader levelReader = new SokReader();
+		try {
+			List<Level> levels = levelReader.readLevels(levelFile);
+			Random random = new Random();
+			currentLevel = levels.get(random.nextInt(levels.size()));
+			renderManager.getRenderContext().setLevel(currentLevel);
+			physicsManager.setLevel(currentLevel);
+			
+			
+			Controller controller = new PlayerController(currentLevel.getPlayer());
+			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+				@Override
+				public void handle(KeyEvent event) {
+					controller.onKeyPressed(event.getCode());
+				}
+				
+			});
+			
+			scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+				@Override
+				public void handle(KeyEvent event) {
+					controller.onKeyReleased(event.getCode());
+				}
+				
+			});
+
+		} catch (ReadLevelException e) {
+			e.printStackTrace();
+		}
+
+		primaryStage.show();
+	}
+
+	private void startPhysicsThread() {
+		physicsManager = new PhysicsManager();
+		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+		executor.scheduleAtFixedRate(physicsManager, 0, 1000 / PhysicsManager.PHYSICS_UPDATE_RATE, TimeUnit.MILLISECONDS);
+	}
+
+	private void startRenderThread(Group root) {
+		Canvas renderCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+		TilesRenderer tilesRenderer = new TilesRenderer();
+		EntitiesRenderer entitiesRenderer = new EntitiesRenderer();
 		IRenderer backgroundRenderer = new IRenderer() {
 
 			@Override
@@ -56,31 +113,13 @@ public class SokobanApplication extends Application {
 			}
 			
 		};
-
+		
+		root.getChildren().add(renderCanvas);
+		renderManager = new RenderManager(this, renderCanvas);
 		renderManager.registerRenderer(backgroundRenderer);
-		
+		renderManager.registerRenderer(tilesRenderer);
+		renderManager.registerRenderer(entitiesRenderer);
 		renderManager.start();
-
-		TilesRenderer tilesRenderer = new TilesRenderer();
-		EntitiesRenderer entitiesRenderer = new EntitiesRenderer();
-		
-		// BEGIN TEST
-		File levelFile = new File("assets/levels/levels.sok");
-		ILevelReader levelReader = new SokReader();
-		try {
-			List<Level> levels = levelReader.readLevels(levelFile);
-			currentLevel = levels.get(0);
-			EntityCrate crate = new EntityCrate(currentLevel);
-			crate.moveTo(128, 256);
-			currentLevel.getEntities().add(crate);
-			renderManager.getRenderContext().setLevel(currentLevel);
-			renderManager.registerRenderer(tilesRenderer);
-			renderManager.registerRenderer(entitiesRenderer);
-		} catch (ReadLevelException e) {
-			e.printStackTrace();
-		}
-
-		primaryStage.show();
 	}
 
 	public RenderManager getRenderManager() {

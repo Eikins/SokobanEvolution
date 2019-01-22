@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import fr.massen.sokoban.entities.Entity;
 import fr.massen.sokoban.level.Level;
 import fr.massen.sokoban.level.tiles.Tile;
 import fr.massen.sokoban.load.Tiles;
@@ -15,11 +17,16 @@ import fr.massen.sokoban.load.Tiles;
 public class SokReader implements ILevelReader {
 
 	private static final Map<Character, Tile> tileCodes = new HashMap<Character, Tile>();
+	private static final Map<Character, Class<? extends Entity>> entityCodes = new HashMap<Character, Class<? extends Entity>>();
 
 	public static void addTileCode(char tileCode, Tile tile) {
 		tileCodes.put(tileCode, tile);
 	}
 
+	public static void addEntityCode(char entityCode, Class<? extends Entity> entityClass) {
+		entityCodes.put(entityCode, entityClass);
+	}
+	
 	@Override
 	public List<Level> readLevels(File file) throws ReadLevelException {
 		List<Level> levels = new ArrayList<Level>();
@@ -42,6 +49,7 @@ public class SokReader implements ILevelReader {
 		List<List<Tile>> readTiles = new ArrayList<List<Tile>>();
 		int width = 0;
 		int height = 0;
+		List<EntityData> entitiesToAdd = new LinkedList<EntityData>();
 		String line;		
 		while(scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) { // Read until empty line or end of file
 			if(!line.startsWith(";")) { // If it's not a comment
@@ -51,7 +59,17 @@ public class SokReader implements ILevelReader {
 				for(char c : line.toCharArray()) {
 					Tile redTile = tileCodes.get(c);
 					if(redTile == null) {
-						throw new ReadLevelException(ReadLevelException.Type.UNKNOWN_TILE);
+						Class<? extends Entity> entityClass = entityCodes.get(c);
+						if(entityClass != null) {
+							int x = lineTiles.size();
+							int y = readTiles.size();
+							EntityData entityData = new EntityData(entityClass, x, y);
+							entitiesToAdd.add(entityData);
+							
+							lineTiles.add(Tiles.FLOOR);
+						} else {
+							throw new ReadLevelException(ReadLevelException.Type.UNKNOWN_TILE);	
+						}
 					} else {
 						lineTiles.add(redTile);
 					}
@@ -74,9 +92,31 @@ public class SokReader implements ILevelReader {
 					}
 				}
 			}
+			for(EntityData entityData : entitiesToAdd) {
+				try {
+					Entity e = entityData.entityClass.getDeclaredConstructor(Level.class).newInstance(levelData);
+					e.setPosition(entityData.x, entityData.y);
+					levelData.addEntity(e);
+				} catch (Exception e) {
+					throw new ReadLevelException(ReadLevelException.Type.UNKNOWN_ENTITY);	
+				}
+			}
 			return levelData;
 		}
 
+	}
+	
+	private class EntityData {
+		
+		public final int x, y;
+		public final Class<? extends Entity> entityClass;
+		
+		public EntityData(Class<? extends Entity> entityClass, int x, int y) {
+			this.x = x;
+			this.y = y;
+			this.entityClass = entityClass;
+		}
+		
 	}
 
 }

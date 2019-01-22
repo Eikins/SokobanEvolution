@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.massen.sokoban.entities.Entity;
+import fr.massen.sokoban.entities.EntityPlayer;
 import fr.massen.sokoban.level.tiles.Tile;
 
 public class Level {
@@ -38,6 +39,13 @@ public class Level {
 
 	public List<Entity> getEntities() {
 		return entities;
+	}
+	
+	public EntityPlayer getPlayer() {
+		for(Entity e : entities) {
+			if(e instanceof EntityPlayer) return (EntityPlayer) e;
+		}
+		return null;
 	}
 	
 }
