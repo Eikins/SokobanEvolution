@@ -8,13 +8,11 @@ import fr.massen.sokoban.client.render.tiles.RenderSolidTile;
 import fr.massen.sokoban.level.Level;
 import fr.massen.sokoban.level.tiles.Tile;
 import fr.massen.sokoban.load.Tiles;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class TilesRenderer implements IRenderer {
 
 	private final Map<Tile, ITileRenderer> tileRenderers;
-	private Level currentLevel;
 
 	public TilesRenderer() {
 		tileRenderers = new HashMap<Tile, ITileRenderer>();
@@ -29,20 +27,17 @@ public class TilesRenderer implements IRenderer {
 		tileRenderers.put(tile, renderer);
 	}
 
-	public void setLevel(Level level) {
-		this.currentLevel = level;
-	}
-
 	@Override
-	public void render(GraphicsContext gc, float deltaTime) {
-		if(currentLevel != null) {
-			for(int x = 0; x < currentLevel.width; x++) {
-				for(int y = 0; y < currentLevel.height; y++) {
-					Tile tile = currentLevel.getTile(x, y);
+	public void render(RenderContext render) {
+		Level level = render.getLevel();
+		if(level != null) {
+			for(int x = 0; x < level.width; x++) {
+				for(int y = 0; y < level.height; y++) {
+					Tile tile = level.getTile(x, y);
 					ITileRenderer tileRenderer = tileRenderers.get(tile);
 					if(tileRenderer != null) {
-						Image img = tileRenderer.getImage(deltaTime);
-						gc.drawImage(img, x * 64, y * 64, 64, 64);
+						Image img = tileRenderer.getImage(render);
+						render.getGraphics().drawImage(img, x * 64, y * 64, 64, 64);
 					}
 				}
 			}
@@ -53,7 +48,6 @@ public class TilesRenderer implements IRenderer {
 	public int getRenderLayer() {
 		return 0;
 	}
-
 
 
 }

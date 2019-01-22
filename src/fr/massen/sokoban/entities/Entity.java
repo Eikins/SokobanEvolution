@@ -1,9 +1,16 @@
-package fr.massen.sokoban.level;
+package fr.massen.sokoban.entities;
+
+import fr.massen.sokoban.level.Level;
 
 public class Entity {
 	
+	protected Level currentLevel;
 	private float posX, posY;
 
+	public Entity(Level level) {
+		this.currentLevel = level;
+	}
+	
 	public void moveTo(float x, float y) {
 		posX = x;
 		posY = y;
@@ -16,4 +23,5 @@ public class Entity {
 	public float getPosY() {
 		return posY;
 	}
+
 }

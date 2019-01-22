@@ -1,5 +1,6 @@
 package fr.massen.sokoban.client.render.tiles;
 
+import fr.massen.sokoban.client.render.RenderContext;
 import fr.massen.sokoban.level.tiles.Tile;
 import javafx.scene.image.Image;
 
@@ -15,7 +16,7 @@ public class RenderSolidTile implements ITileRenderer {
 	}
 
 	@Override
-	public Image getImage(float deltaTime) {
+	public Image getImage(RenderContext context) {
 		return image;
 	}
 

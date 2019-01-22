@@ -1,10 +1,8 @@
 package fr.massen.sokoban.client.render;
 
-import javafx.scene.canvas.GraphicsContext;
-
 public interface IRenderer {
 	
-	void render(GraphicsContext gc, float deltaTime);
+	void render(RenderContext render);
 	
 	int getRenderLayer();
 

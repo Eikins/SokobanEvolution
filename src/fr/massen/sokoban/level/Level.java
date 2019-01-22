@@ -3,6 +3,7 @@ package fr.massen.sokoban.level;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.massen.sokoban.entities.Entity;
 import fr.massen.sokoban.level.tiles.Tile;
 
 public class Level {
@@ -33,6 +34,10 @@ public class Level {
 
 	public Tile getTile(int x, int y) {
 		return tiles[x][y];
+	}
+
+	public List<Entity> getEntities() {
+		return entities;
 	}
 	
 }

@@ -4,22 +4,26 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.massen.sokoban.SokobanApplication;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class RenderManager extends AnimationTimer {
 
-	private long lastNanoTime;
-	private float deltaTime;
+	private SokobanApplication application;
 	
-	private GraphicsContext graphicsContext;
+	private RenderContext renderContext;
 	List<IRenderer> renderers;
 	
 	
-	public RenderManager(Canvas canvas) {
+	public RenderManager(SokobanApplication application, Canvas canvas) {
 		this.renderers = new LinkedList<IRenderer>();
-		this.graphicsContext = canvas.getGraphicsContext2D();
+		renderContext = new RenderContext(canvas.getGraphicsContext2D(), null);
+	}
+	
+	public RenderContext getRenderContext() {
+		return renderContext;
 	}
 
 	public void registerRenderer(IRenderer renderer) {
@@ -42,12 +46,10 @@ public class RenderManager extends AnimationTimer {
 	
 	@Override
 	public void handle(long currentNanoTime) {
-		deltaTime = ((float)currentNanoTime - (float)lastNanoTime) / 1000000000.0F;
-		lastNanoTime = currentNanoTime;
-		
+		renderContext.updateDeltaTime(currentNanoTime);
 		// Do Renders
 		for(IRenderer renderer : renderers) {
-			renderer.render(graphicsContext, deltaTime);
+			renderer.render(renderContext);
 		}
 	}
 	
