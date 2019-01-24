@@ -14,16 +14,21 @@ import fr.massen.sokoban.client.render.RenderManager;
 import fr.massen.sokoban.client.render.TilesRenderer;
 import fr.massen.sokoban.controller.Controller;
 import fr.massen.sokoban.controller.PlayerController;
+import fr.massen.sokoban.entities.Entity;
 import fr.massen.sokoban.io.ILevelReader;
 import fr.massen.sokoban.io.ReadLevelException;
 import fr.massen.sokoban.io.SokReader;
 import fr.massen.sokoban.level.Level;
+import fr.massen.sokoban.level.tiles.Tile;
+import fr.massen.sokoban.maths.Vector2f;
+import fr.massen.sokoban.physics.AxisAlignedBoundingBox;
 import fr.massen.sokoban.physics.PhysicsManager;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -114,11 +119,56 @@ public class SokobanApplication extends Application {
 			
 		};
 		
+		IRenderer hitBoxRenderer = new IRenderer() {
+
+			@Override
+			public void render(RenderContext render) {
+				GraphicsContext graphics = render.getGraphics();
+				Level level = render.getLevel();
+				if(level == null) return;
+				
+				graphics.setStroke(Color.AQUA);
+				
+				for(int x = 0; x < level.width; x++) {
+					for(int y = 0; y < level.height; y++) {
+						Tile tile = level.getTile(x, y);
+						AxisAlignedBoundingBox aabb = tile.getCollisionBox();
+						if(tile.getCollisionBox() != null) {
+							aabb.offset = new Vector2f(x, y);
+							Vector2f from = aabb.getLowLeftCorner();
+							Vector2f to = aabb.getUpRightCorner();
+							float width = to.x - from.x;
+							float height = to.y - from.y;
+							graphics.strokeRect(from.x * 64, from.y * 64, width * 64, height * 64);
+						}
+					}
+				}
+				
+				for(Entity entity : level.getEntities()) {
+					if(entity.getHitBox() != null) {
+						Vector2f from = entity.getHitBox().getLowLeftCorner();
+						Vector2f to = entity.getHitBox().getUpRightCorner();
+						float width = to.x - from.x;
+						float height = to.y - from.y;
+						graphics.strokeRect(from.x * 64, from.y * 64, width * 64, height * 64);
+					}
+				}
+			}
+
+			@Override
+			public int getRenderLayer() {
+				return 10;
+			}
+			
+		};
+		
 		root.getChildren().add(renderCanvas);
 		renderManager = new RenderManager(this, renderCanvas);
 		renderManager.registerRenderer(backgroundRenderer);
 		renderManager.registerRenderer(tilesRenderer);
 		renderManager.registerRenderer(entitiesRenderer);
+		// DEBUG PURPOSE
+		 renderManager.registerRenderer(hitBoxRenderer);
 		renderManager.start();
 	}
 

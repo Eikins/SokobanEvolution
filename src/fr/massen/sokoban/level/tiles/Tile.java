@@ -1,5 +1,7 @@
 package fr.massen.sokoban.level.tiles;
 
+import fr.massen.sokoban.physics.AxisAlignedBoundingBox;
+
 public class Tile {
 	
 	private final String tileName;
@@ -8,8 +10,8 @@ public class Tile {
 		this.tileName = tileName;
 	}
 	
-	public boolean isWall() {
-		return false;
+	public AxisAlignedBoundingBox getCollisionBox() {
+		return null;
 	}
 	
 	public String getAbsoluteName() {

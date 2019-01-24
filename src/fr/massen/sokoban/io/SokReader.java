@@ -96,7 +96,7 @@ public class SokReader implements ILevelReader {
 			for(EntityData entityData : entitiesToAdd) {
 				try {
 					Entity e = entityData.entityClass.getDeclaredConstructor(Level.class).newInstance(levelData);
-					e.setPosition(new Vector2f(entityData.x, entityData.y));
+					e.setPosition(new Vector2f(entityData.x + 0.5f, entityData.y + 0.5f));
 					levelData.addEntity(e);
 				} catch (Exception e) {
 					throw new ReadLevelException(ReadLevelException.Type.UNKNOWN_ENTITY);	

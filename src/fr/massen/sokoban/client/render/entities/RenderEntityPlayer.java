@@ -20,7 +20,7 @@ public class RenderEntityPlayer implements IEntityRenderer<EntityPlayer> {
 		float x = lastPosition.x + (position.x - lastPosition.x) * context.getPartialTime();
 		float y = lastPosition.y + (position.y - lastPosition.y) * context.getPartialTime();
 		
-		context.getGraphics().drawImage(image, x * 64, y * 64, 64, 64);
+		context.getGraphics().drawImage(image, (x - 0.5f) * 64, (y - 0.5f) * 64, 64, 64);
 	}
 	
 }
