@@ -2,6 +2,7 @@ package fr.massen.sokoban.client.render.entities;
 
 import fr.massen.sokoban.client.render.RenderContext;
 import fr.massen.sokoban.entities.Entity;
+import fr.massen.sokoban.maths.Vector2f;
 import javafx.scene.image.Image;
 
 public class RenderEntityBasic implements IEntityRenderer<Entity> {
@@ -14,8 +15,11 @@ public class RenderEntityBasic implements IEntityRenderer<Entity> {
 	
 	@Override
 	public void render(Entity entity, RenderContext context) {
-		float x = entity.getLastPosX() + (entity.getPosX() - entity.getLastPosX()) * context.getPartialTime();
-		float y = entity.getLastPosY() + (entity.getPosY() - entity.getLastPosY()) * context.getPartialTime();
+		Vector2f lastPosition = entity.getLastPosition();
+		Vector2f position = entity.getPosition();
+		float x = lastPosition.x + (position.x - lastPosition.x) * context.getPartialTime();
+		float y = lastPosition.y + (position.y - lastPosition.y) * context.getPartialTime();
+		
 		context.getGraphics().drawImage(image, x * 64, y * 64, 64, 64);
 	}
 	

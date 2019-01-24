@@ -1,32 +1,27 @@
 package fr.massen.sokoban.entities;
 
 import fr.massen.sokoban.level.Level;
+import fr.massen.sokoban.maths.Vector2f;
 import fr.massen.sokoban.physics.PhysicsManager;
 
 public class EntityPlayer extends Entity {
 
-	private float velocityX, velocityY;
+	private Vector2f velocity;
 	
 	public EntityPlayer(Level level) {
 		super(level);
+		velocity = new Vector2f(0, 0);
 	}
 	
 	@Override
 	public void onPhysicsUpdate() {
 		super.onPhysicsUpdate();
-		posX += velocityX / PhysicsManager.PHYSICS_UPDATE_RATE;
-		posY += velocityY / PhysicsManager.PHYSICS_UPDATE_RATE;
-		
-		
-		
+		position.x += velocity.x / PhysicsManager.PHYSICS_UPDATE_RATE;
+		position.y += velocity.y / PhysicsManager.PHYSICS_UPDATE_RATE;
 	}
 
-	public void setVelocityX(float velocityX) {
-		this.velocityX = velocityX;
-	}
-	
-	public void setVelocityY(float velocityY) {
-		this.velocityY = velocityY;
+	public void setVelocity(Vector2f velocity) {
+		this.velocity = velocity;
 	}
 
 }

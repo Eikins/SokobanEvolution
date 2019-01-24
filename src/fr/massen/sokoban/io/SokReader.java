@@ -13,6 +13,7 @@ import fr.massen.sokoban.entities.Entity;
 import fr.massen.sokoban.level.Level;
 import fr.massen.sokoban.level.tiles.Tile;
 import fr.massen.sokoban.load.Tiles;
+import fr.massen.sokoban.maths.Vector2f;
 
 public class SokReader implements ILevelReader {
 
@@ -95,7 +96,7 @@ public class SokReader implements ILevelReader {
 			for(EntityData entityData : entitiesToAdd) {
 				try {
 					Entity e = entityData.entityClass.getDeclaredConstructor(Level.class).newInstance(levelData);
-					e.setPosition(entityData.x, entityData.y);
+					e.setPosition(new Vector2f(entityData.x, entityData.y));
 					levelData.addEntity(e);
 				} catch (Exception e) {
 					throw new ReadLevelException(ReadLevelException.Type.UNKNOWN_ENTITY);	

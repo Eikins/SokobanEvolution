@@ -1,50 +1,34 @@
 package fr.massen.sokoban.entities;
 
 import fr.massen.sokoban.level.Level;
+import fr.massen.sokoban.maths.Vector2f;
 
 public class Entity {
 	
 	protected Level currentLevel;
-	protected float posX, posY;
-	private float lastPosX, lastPosY;
+	protected Vector2f position;
+	private Vector2f lastPosition;
 
 	public Entity(Level level) {
+		this.position = new Vector2f(0f, 0f);
+		this.lastPosition = new Vector2f(0f, 0f);
 		this.currentLevel = level;
 	}
 	
-	public void moveTo(float x, float y) {
-		lastPosX = posX;
-		lastPosY = posY;
-		posX = x;
-		posY = y;
+	public void setPosition(Vector2f position) {
+		this.position = position;
 	}
 	
-	public void setPosition(float x, float y) {
-		this.posX = x;
-		this.posY = y;
-		this.lastPosX = x;
-		this.lastPosY = y;
+	public Vector2f getPosition() {
+		return position;
 	}
 	
-	public float getPosX() {
-		return posX;
-	}
-	
-	public float getPosY() {
-		return posY;
-	}
-	
-	public float getLastPosX() {
-		return lastPosX;
-	}
-	
-	public float getLastPosY() {
-		return lastPosY;
+	public Vector2f getLastPosition() {
+		return lastPosition;
 	}
 	
 	public void onPhysicsUpdate() {
-		lastPosX = posX;
-		lastPosY = posY;
+		lastPosition = position.copy();
 	}
 
 }
